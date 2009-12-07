@@ -1014,7 +1014,7 @@ function request_uri($env = null)
   {
     $uri = '/' . $uri; # add a leading slash
   }
-  return $uri;
+  return rawurldecode($uri);
 }
 
 
@@ -1763,16 +1763,17 @@ function v($value, $default)
  *
  * @param string $path Path in which are the file to load
  * @param string $pattern a regexp pattern that filter files to load
+ * @param bool $prevents_output security option that prevents output
  * @return array paths of loaded files
  */
-function require_once_dir($path, $pattern = "*.php")
+function require_once_dir($path, $pattern = "*.php", $prevents_output = true)
 {
   if($path[strlen($path) - 1] != "/") $path .= "/";
   $filenames = glob($path.$pattern);
   if(!is_array($filenames)) $filenames = array();
-  ob_start();
+  if($prevents_output) ob_start();
   foreach($filenames as $filename) require_once $filename;
-  ob_end_clean();
+  if($prevents_output) ob_end_clean();
   return $filenames;
 }
 

@@ -128,11 +128,17 @@ test_case("Main");
      ob_start();
      assert_empty(require_once_dir($root));
      $files = require_once_dir($root, "AUTHORS");
+     assert_empty(ob_get_contents());
      ob_clean();
      
      assert_length_of($files, 1);
      assert_match('/AUTHORS$/', $files[0]);
      
+     ob_start();
+     $files = require_once_dir($root, "CHANGES", false);
+     assert_not_empty(ob_get_contents());
+     ob_clean();
+    
      $lib = $root.'/lib';
      $limonade = $lib.'/limonade';
      
@@ -172,6 +178,7 @@ test_case("Main");
      assert_equal(url_for(''), '/');
      assert_equal(url_for('/'), '/');
      assert_equal(url_for('test'), '/test');
+     assert_equal(url_for('mañana'), '/'.rawurlencode(mañana));
      assert_equal(url_for('test', 1, 2), '/test/1/2');
      assert_equal(url_for('one', 'two', 'three'), '/one/two/three');
      assert_equal(url_for('my/hash#test'), '/my/hash#test');
